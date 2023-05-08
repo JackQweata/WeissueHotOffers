@@ -13,6 +13,8 @@ webdriver-manager = "^3.8.6"
 fake-headers = "^1.0.2"
 python-decouple = "^3.8"
 pytelegrambotapi = "^4.11.0"
+sqlalchemy = "^2.0.12"
+pymysql = "^1.0.3"
 
 
 [tool.poetry.group.dev.dependencies]
