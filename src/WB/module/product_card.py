@@ -6,13 +6,14 @@ from utils.api_request import response
 
 
 class CardProduct:
-    def __init__(self, product_id, price):
-        self.product_id = product_id
-        self.driver = get_chromedriver()
+    def __init__(self, product):
+        self.product_id = product.get('id')
+        self.name = product.get('name')
+        self.price = product.get('salePriceU')
+        self.brand = product.get('brand')
         self.image = None
         self.last_price = 0
         self.size_name = []
-        self.price = price
 
     def get_last_price(self):
         if self.image:
@@ -24,11 +25,12 @@ class CardProduct:
         return self.last_price
 
     def get_image(self):
-        self.driver.get(f'https://www.wildberries.ru/catalog/{self.product_id}/detail.aspx')
-
-        get_image = exception_element(self.driver, '//div[@class="zoom-image-container"]/img')
+        driver = get_chromedriver()
+        driver.get(f'https://www.wildberries.ru/catalog/{self.product_id}/detail.aspx')
+        print(1)
+        get_image = exception_element(driver, '//div[@class="zoom-image-container"]/img')
         self.image = get_image.get_attribute('src')
-        self.driver.quit()
+        driver.quit()
 
         return self.image
 
@@ -40,7 +42,7 @@ class CardProduct:
         sizes_name = sizes_name["data"]["products"][0]
 
         for item in sizes_name["sizes"]:
-            if item["stocks"] and item["stocks"][-1]["qty"] <= 5:
+            if item["stocks"] and item["stocks"][-1]["qty"] <= 3:
                 self.size_name.append(item["name"])
 
         return self.size_name

@@ -2,14 +2,12 @@ from threading import Lock
 
 
 class ParserManagementWB:
+    stop_parse = True
+
     def __init__(self):
-        self.stop_parse = True
         self.count_page = 1
         self.count_product = 0
-
-    def set_stop_parse(self, value: bool):
-        with Lock():
-            self.stop_parse = value
+        self.channel_type = None
 
     def set_count_page(self, value):
         self.count_page = value
@@ -25,3 +23,8 @@ class ParserManagementWB:
 
     def get_count_product(self):
         return self.count_product
+
+
+def set_stop_parse(value: bool):
+    with Lock():
+        ParserManagementWB.stop_parse = value

@@ -2,12 +2,12 @@ import telebot
 from decouple import config
 from telebot import types
 from ast import literal_eval
-from src.WB.module.parser_management import ParserManagementWB
+from src.WB.module.parser_management import ParserManagementWB, set_stop_parse
 from src.WB.run_parser import start_parse
 from utils.run_threading import start_threading
 
 
-def commands():
+def commands_admin_bot():
     bot = telebot.TeleBot(config("TOKEN_BOT_DEVELOPER"))
     admin_id = literal_eval(config("CHAT_ADMIN_ID"))
     management = ParserManagementWB()
@@ -35,7 +35,7 @@ def commands():
             if not management.get_stop_parse():
                 return bot.send_message(message.chat.id, f'Уже остановлен')
 
-            management.set_stop_parse(False)
+            set_stop_parse(False)
             bot.send_message(message.chat.id, f'Все парсеры остановлены')
 
         elif message.text == '💹 Запустить парсер':
@@ -43,7 +43,7 @@ def commands():
             if management.get_stop_parse():
                 return bot.send_message(message.chat.id, f'Уже запущен')
 
-            management.set_stop_parse(True)
+            set_stop_parse(True)
 
             start_threading([
                 {"target": start_parse, "args": ((config("WB_URL_WOMAN_CLOTHES")), ("woman"),)},
