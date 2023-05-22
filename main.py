@@ -1,19 +1,16 @@
-from decouple import config
+from modules.channel_object import ChannelObject
 from src.WB.run_parser import start_parse
 from src.bots.admin.admin_commads import commands_admin_bot
 from utils.run_threading import start_threading
 
 
 def main():
-    active_processes = [
-        # {"target": start_parse, "args": ((config("WB_URL_WOMAN_CLOTHES")), ("woman"), )},
-        {"target": start_parse, "args": ((config("WB_URL_MEN_CLOTHES")), ("men"), )},
-        # {"target": start_parse, "args": ((config("WB_URL_CHILDREN_CLOTHES")), "children",)},
-        {"target": commands_admin_bot, "args": ()}
-
-    ]
-
-    start_threading(active_processes)
+    ChannelObject.collect_data()
+    for channels_dict in ChannelObject.channels_dict.values():
+        url, name = channels_dict['class'].url, channels_dict['class'].name
+        date_dict = {'target': start_parse, 'args': (url, name,), 'name': name}
+        thread = start_threading(date_dict)
+        channels_dict['thread'] = thread
 
 
 if __name__ == '__main__':

@@ -1,6 +1,6 @@
 from decouple import config
 from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, BigInteger, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, BigInteger, ForeignKey, DateTime, func, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -28,6 +28,7 @@ class UserSubscriptions(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('users.id'))
+    title = Column(String(50))
     channel_id = Column(BigInteger)
     subscription_dates = Column(DateTime, server_default=func.now())
     end_subscription = Column(DateTime)
@@ -40,6 +41,25 @@ class Posts(Base):
     product_id = Column(BigInteger)
     price = Column(Integer)
     date = Column(DateTime, server_default=func.now())
+
+
+class Channel(Base):
+    __tablename__ = 'channel'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    description = Column(Text, default='')
+    price = Column(Integer, nullable=False)
+    url = relationship('ChannelUrl', backref='channel')
+    channel_id = Column(BigInteger, nullable=False)
+
+
+class ChannelUrl(Base):
+    __tablename__ = 'channel_url'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    channel_id = Column(Integer, ForeignKey('channel.id'))
 
 
 Base.metadata.create_all(engine)

@@ -5,24 +5,33 @@ class ParserManagementWB:
     stop_parse = True
 
     def __init__(self):
-        self.count_page = 1
-        self.count_product = 0
-        self.channel_type = None
+        self._count_page = 1
+        self._count_product = 0
+        self._channel_type = None
 
-    def set_count_page(self, value):
-        self.count_page = value
+    @property
+    def count_page(self):
+        return self._count_page
 
-    def set_count_product(self, value):
-        self.count_product = value
+    @property
+    def count_product(self):
+        return self._count_product
 
-    def get_stop_parse(self):
-        return self.stop_parse
+    @property
+    def channel_type(self):
+        return self._channel_type
 
-    def get_count_page(self):
-        return self.count_page
+    @count_page.setter
+    def count_page(self, value):
+        self._count_page = value
 
-    def get_count_product(self):
-        return self.count_product
+    @count_product.setter
+    def count_product(self, value):
+        self._count_product = value
+
+    @channel_type.setter
+    def channel_type(self, value):
+        self._channel_type = value
 
 
 def set_stop_parse(value: bool):

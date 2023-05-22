@@ -1,7 +1,7 @@
 import datetime
+import logging
 from src.WB.module.product_card import CardProduct
 from sqlalchemy.orm import sessionmaker
-
 from utils.mysql import engine, Posts
 
 
@@ -23,11 +23,11 @@ def get_product_description(card_product):
 
     type_title = ''
 
-    if not card_product.get_size_name():
-        if card_product.get_price() <= card_product.get_last_price():
+    if not card_product.size_name:
+        if card_product.price <= card_product.last_price:
             type_title = "Низкая цена"
     else:
-        name_size = card_product.get_size_name()[0]
+        name_size = card_product.size_name[0]
         type_title = f"Осталось мало штук\n {name_size} размера"
 
     return type_title

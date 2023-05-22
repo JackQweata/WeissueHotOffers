@@ -1,7 +1,7 @@
 import threading as mp
 
 
-def start_threading(active_processes):
-    for processes in active_processes:
-        date = mp.Thread(target=processes["target"], args=processes["args"])
-        date.start()
+def start_threading(date):
+    thread = mp.Thread(target=date["target"], args=date.get("args"), name=date['name'])
+    thread.start()
+    return thread

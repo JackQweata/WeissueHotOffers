@@ -8,32 +8,32 @@ from src.bots.admin.admin_message import send_message
 from utils.api_request import response
 
 
-def start_parse(URL, channel_type):
+def start_parse(urls, channel_type):
     logging.config.fileConfig('logging.ini', disable_existing_loggers=False)
     logger = logging.getLogger('sLogger')
-
     send_message('info', f'Начался парсинг WB категории: {channel_type}')
     management = ParserManagementWB()
 
-    while management.get_stop_parse():
+    while management.stop_parse:
         try:
 
-            logger.info(f"{management.get_count_page()} page {channel_type}\n")
-            data_response = response(f'{URL}{management.get_count_page()}')
+            logger.info(f"{management.count_page} page {channel_type}\n")
+            data_response = response(f'{urls[0]}{management.count_page}')
 
             if not data_response:
                 logger.error('Не получены товары')
                 send_message('err', data_response)
                 break
 
-            if management.get_count_page() == 50:  # Ограничения по страницам
-                break
+            if management.count_page == 50:  # Ограничения по страницам
+                management.count_page = 1
+                continue
 
             products = product_search(data_response['data']['products'])
 
             for product in products:
 
-                if not management.get_stop_parse():
+                if not management.stop_parse:
                     logger.info("Парсер остановлен через бота")
                     break
 
@@ -46,13 +46,10 @@ def start_parse(URL, channel_type):
                 channel_id, url_photo, text_post, keyboard = publication_tg_channel(channel_type, product)
                 bot.send_photo(channel_id, url_photo, caption=text_post, reply_markup=keyboard)
 
-                management.set_count_product(len(products))
+                management.count_product = len(products)
 
-        except Exception as _err:
-            logger.error(_err)
-            send_message('err', _err)
-            continue
+
         finally:
-            management.set_count_page(management.get_count_page() + 1)
+            management.count_page += 1
 
-    send_message('info', f"Нашлось {management.get_count_product()} товара в категории {channel_type}")
+    send_message('info', f"Нашлось {management.count_product} товара в категории {channel_type}")

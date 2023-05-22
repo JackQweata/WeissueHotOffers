@@ -11,7 +11,7 @@ def get_chromedriver(use_proxy=False):
 
         chrome_options.add_argument('--user-agent=%s' % Headers(headers=True).generate())
         chrome_options.add_argument('--disable-blink-features=AutomationControlled')
-        chrome_options.headless = False   # фоновый режим
+        chrome_options.headless = True   # фоновый режим
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         return driver
     except WebDriverException:
