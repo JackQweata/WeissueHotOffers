@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 
 def exception_element(driver, path):
     try:
-        wait = WebDriverWait(driver, 5)
+        wait = WebDriverWait(driver, 10)
         element = wait.until(es.presence_of_element_located((By.XPATH, path)))
         return element
 

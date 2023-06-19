@@ -40,6 +40,7 @@ class Posts(Base):
     id = Column(Integer, primary_key=True)
     product_id = Column(BigInteger)
     price = Column(Integer)
+    url = Column(Text)
     date = Column(DateTime, server_default=func.now())
 
 
@@ -60,6 +61,7 @@ class ChannelUrl(Base):
     id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
     channel_id = Column(Integer, ForeignKey('channel.id'))
+    type = Column(Integer, nullable=False)
 
 
 Base.metadata.create_all(engine)

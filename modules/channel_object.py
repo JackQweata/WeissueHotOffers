@@ -1,6 +1,6 @@
 from ast import literal_eval
 from sqlalchemy.orm import sessionmaker
-from utils.mysql import engine, Channel
+from utils.mysql import engine, Channel, ChannelUrl
 from threading import Lock
 
 
@@ -12,7 +12,8 @@ class ChannelObject:
         self.__name = name
         self.__channel_id = channel_id
         self.__price = price
-        self.__description = literal_eval(description)
+        self.__description = description
+        self.__types_parsers = None
         self.__url = url
 
     @classmethod
@@ -22,13 +23,28 @@ class ChannelObject:
         with session:
             channels = session.query(Channel).all()
             for channel in channels:
-                channel_url = [url.name for url in channel.url]
+                types_parsers = [type_parser.type for type_parser in channel.url]
+                type_parser = 3 if 1 in types_parsers and 0 in types_parsers else types_parsers[0]
                 cls.channels_dict[channel.name] = {
-                        "class": ChannelObject(channel.name, channel.channel_id, channel.price, channel.description,
-                                               channel_url)}
+                    "class": ChannelObject(channel.name, channel.channel_id, channel.price, channel.description,
+                                           channel.url),
+                    "type": type_parser,
+                    "status": True,
+                    }
 
-    def __str__(self):
-        return self.__name
+    def create_new_channel(self):
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        with session:
+            new_channel = Channel(name=self.name, description=self.description,
+                                  price=self.price, channel_id=self.channel_id)
+
+            for url_item in self.url.values():
+                url = ChannelUrl(name=url_item['url'], type=url_item['type'])
+                new_channel.url.append(url)
+
+            session.add(new_channel)
+            session.commit()
 
     @property
     def name(self):
@@ -47,5 +63,12 @@ class ChannelObject:
         return self.__description
 
     @property
+    def types_parsers(self):
+        return self.__types_parsers
+
+    @property
     def url(self):
         return self.__url
+
+    def __str__(self):
+        return self.__name

@@ -1,5 +1,5 @@
-from src.WB.filtering_products import published_posts
-from src.WB.module.product_card import CardProduct
+from modules.filtering_products import published_posts
+from src.WB.product_card import CardProduct
 
 
 def test_card_product():
